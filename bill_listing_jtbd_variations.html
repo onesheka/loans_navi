@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Bill Listing Page — JTBD Redesign Variations</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'DM Sans', sans-serif; background: #F7F7F5; color: #1a1a1a; }
+  button { font-family: inherit; }
+  input { font-family: inherit; }
+
+  .hero { padding: 48px 32px 32px; text-align: center; background: linear-gradient(180deg, #fff, #F7F7F5); }
+  .hero .eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 2px; color: #999; margin-bottom: 10px; }
+  .hero h1 { font-size: 32px; font-weight: 800; margin: 0 0 8px; line-height: 1.2; }
+  .hero p { font-size: 14px; color: #777; max-width: 520px; margin: 0 auto; }
+
+  .tabs { display: flex; justify-content: center; gap: 8px; padding: 0 24px 32px; flex-wrap: wrap; }
+  .tab-btn { padding: 8px 20px; border-radius: 10px; font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.2s; border: 1.5px solid #ddd; background: #fff; color: #555; }
+  .tab-btn.active { border: none; background: #1a1a1a; color: #fff; }
+
+  .phones-row { display: flex; justify-content: center; gap: 40px; padding: 0 24px 60px; flex-wrap: wrap; }
+
+  .phone-wrapper { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+  .phone-frame { width: 375px; min-height: 720px; background: #fff; border-radius: 40px; border: 8px solid #1a1a1a; position: relative; overflow: hidden; box-shadow: 0 25px 60px rgba(0,0,0,0.15), 0 8px 20px rgba(0,0,0,0.1); }
+  .status-bar { height: 50px; background: #fff; display: flex; align-items: center; justify-content: space-between; padding: 0 24px; }
+  .status-bar .time { font-size: 14px; font-weight: 700; font-family: 'SF Pro Display', 'DM Sans', sans-serif; }
+  .phone-content { height: 670px; overflow-y: auto; overflow-x: hidden; }
+  .phone-label { font-size: 15px; font-weight: 700; text-align: center; }
+  .phone-desc { font-size: 12px; color: #666; text-align: center; line-height: 1.4; max-width: 375px; }
+
+  .header-row { display: flex; align-items: center; padding: 8px 16px 12px; gap: 12px; }
+  .header-title { font-size: 17px; font-weight: 700; flex: 1; text-align: center; }
+  .help-link { font-size: 13px; font-weight: 600; color: #E63946; }
+
+  .search-box { display: flex; align-items: center; gap: 10px; background: #F5F5F5; border-radius: 12px; padding: 10px 14px; margin: 0 16px 8px; }
+  .search-box input { border: none; background: none; outline: none; font-size: 13px; color: #333; flex: 1; }
+
+  .chip-row { display: flex; gap: 8px; padding: 6px 16px 14px; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .chip { padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; white-space: nowrap; cursor: pointer; border: 1.5px solid #E0E0E0; background: #fff; color: #555; transition: all 0.2s; }
+  .chip.active { border: none; background: #1a1a1a; color: #fff; }
+
+  .section-label { font-size: 13px; font-weight: 700; color: #999; letter-spacing: 0.5px; margin-bottom: 8px; }
+
+  .offer-banner { margin: 0 16px 16px; padding: 10px 14px; border-radius: 12px; background: linear-gradient(135deg, #FFF8E1, #FFF3CD); display: flex; align-items: center; gap: 10px; }
+  .offer-icon { width: 32px; height: 32px; border-radius: 50%; background: #FFB300; display: flex; align-items: center; justify-content: center; font-size: 16px; color: #fff; font-weight: 700; }
+
+  .lender-row { display: flex; align-items: center; padding: 12px 0; border-bottom: 1px solid #F0F0F0; gap: 12px; }
+  .lender-row:last-child { border-bottom: none; }
+  .lender-icon { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 13px; font-weight: 700; flex-shrink: 0; }
+  .lender-name { font-size: 14px; font-weight: 600; color: #1a1a1a; }
+  .lender-sub { font-size: 11px; color: #aaa; }
+
+  .security-footer { margin: 0 16px 20px; padding: 10px 14px; border-radius: 10px; background: #F5F7FA; display: flex; align-items: center; gap: 10px; border: 1px solid #E8ECF0; }
+  .security-footer span { font-size: 11px; color: #555; line-height: 1.4; }
+
+  .saved-card { display: flex; align-items: center; padding: 10px 14px; background: #F0FFF4; border-radius: 12px; gap: 12px; border: 1px solid #C6F6D5; margin-bottom: 6px; }
+  .saved-badge { font-size: 10px; padding: 3px 8px; border-radius: 6px; background: #E8F5E9; color: #2E7D32; font-weight: 600; }
+
+  /* Matrix */
+  .matrix-card { background: #fff; border-radius: 16px; padding: 28px 24px; box-shadow: 0 4px 20px rgba(0,0,0,0.06); border: 1px solid #eee; max-width: 900px; margin: 0 auto; }
+  .matrix-card h3 { font-size: 18px; font-weight: 800; margin-bottom: 4px; }
+  .matrix-card p { font-size: 13px; color: #888; margin-bottom: 20px; }
+  .matrix-card table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  .matrix-card th { text-align: left; padding: 10px 8px; font-weight: 700; color: #555; border-bottom: 2px solid #eee; }
+  .matrix-card td { padding: 10px 8px; border-bottom: 1px solid #f5f5f5; }
+
+  /* Variation B dark header */
+  .dark-header { background: linear-gradient(180deg, #1a1a1a, #2d2d2d); color: #fff; padding: 8px 16px 10px; display: flex; align-items: center; gap: 12px; }
+  .category-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; background: linear-gradient(180deg, #2d2d2d, #1a1a1a); padding: 0 16px 14px; }
+  .cat-btn { padding: 10px 6px; border-radius: 10px; font-size: 11px; font-weight: 600; cursor: pointer; text-align: center; border: none; background: rgba(255,255,255,0.05); color: rgba(255,255,255,0.6); transition: all 0.2s; }
+  .cat-btn.active { background: rgba(255,255,255,0.15); color: #fff; }
+  .cat-emoji { font-size: 18px; margin-bottom: 4px; }
+
+  .resume-card { display: flex; align-items: center; padding: 14px; background: #fff; border-radius: 14px; gap: 12px; border: 1.5px solid #E8E8E8; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+  .pay-btn { padding: 6px 12px; border-radius: 8px; background: #1a1a1a; color: #fff; font-size: 11px; font-weight: 700; border: none; }
+
+  .saved-carousel { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 4px; }
+  .saved-tile { min-width: 120px; padding: 14px 12px; background: #fff; border-radius: 14px; border: 1.5px solid #E8E8E8; text-align: center; box-shadow: 0 2px 6px rgba(0,0,0,0.03); }
+
+  .trust-footer { margin: 0 16px 20px; padding: 12px; border-radius: 12px; background: #F8FAF8; text-align: center; border: 1px solid #E8F0E8; }
+  .trust-badges { display: flex; justify-content: center; gap: 16px; margin-bottom: 6px; }
+  .trust-badges span { font-size: 10px; color: #2E7D32; font-weight: 600; }
+
+  /* Variation C */
+  .toggle-row { display: flex; padding: 0 16px 10px; }
+  .toggle-btn { flex: 1; padding: 10px; border: none; cursor: pointer; font-size: 13px; font-weight: 700; transition: all 0.2s; }
+  .toggle-btn.left { border-radius: 10px 0 0 10px; }
+  .toggle-btn.right { border-radius: 0 10px 10px 0; }
+  .toggle-btn.active { background: #1a1a1a; color: #fff; }
+  .toggle-btn.inactive { background: #F0F0F0; color: #888; }
+
+  .chip-sm { padding: 5px 12px; border-radius: 8px; font-size: 11px; font-weight: 600; white-space: nowrap; cursor: pointer; border: none; transition: all 0.15s; }
+  .chip-sm.active { background: #E8F0FE; color: #1A73E8; }
+  .chip-sm.inactive { background: #F5F5F5; color: #777; }
+
+  .resume-highlight { display: flex; align-items: center; padding: 12px 14px; gap: 12px; background: linear-gradient(135deg, #EEF2FF, #E8F0FE); border-radius: 14px; border: 1px solid #D0DBFF; margin: 0 16px 12px; }
+  .resume-arrow { width: 36px; height: 36px; border-radius: 50%; background: #1A73E8; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+
+  .type-tag { font-size: 10px; padding: 2px 7px; border-radius: 4px; background: #F0F0F0; color: #666; font-weight: 600; }
+  .alias-tag { font-size: 10px; color: #1A73E8; font-weight: 600; }
+  .saved-star { font-size: 10px; color: #2E7D32; font-weight: 600; }
+
+  .hidden { display: none !important; }
+
+  @media (max-width: 480px) {
+    .phone-frame { width: 340px; }
+    .hero h1 { font-size: 24px; }
+    .phones-row { gap: 24px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="eyebrow">BILL LISTING PAGE REDESIGN</div>
+  <h1>JTBD-Driven Variations</h1>
+  <p>Three design approaches that address all five jobs-to-be-done identified in the UX audit</p>
+</div>
+
+<div class="tabs" id="tabs">
+  <button class="tab-btn active" data-tab="all">All Variations</button>
+  <button class="tab-btn" data-tab="a">A: Filter-First</button>
+  <button class="tab-btn" data-tab="b">B: Smart Discovery</button>
+  <button class="tab-btn" data-tab="c">C: Unified View</button>
+  <button class="tab-btn" data-tab="matrix">Coverage Matrix</button>
+</div>
+
+<div class="phones-row" id="phones-row">
+
+  <!-- ═══ VARIATION A ═══ -->
+  <div class="phone-wrapper" data-variation="a">
+    <div class="phone-frame">
+      <div class="status-bar"><span class="time">11:27</span><div></div></div>
+      <div class="phone-content" id="phone-a"></div>
+    </div>
+    <div class="phone-label">Variation A — Filter-First</div>
+    <div class="phone-desc">Addresses J1 (loan type filters), J2 (alias search + saved section), J3 (full names in list)</div>
+  </div>
+
+  <!-- ═══ VARIATION B ═══ -->
+  <div class="phone-wrapper" data-variation="b">
+    <div class="phone-frame">
+      <div class="status-bar"><span class="time">11:27</span><div></div></div>
+      <div class="phone-content" id="phone-b"></div>
+    </div>
+    <div class="phone-label">Variation B — Smart Discovery</div>
+    <div class="phone-desc">Prominent category tabs, smart search with alias support, trust badges on each lender</div>
+  </div>
+
+  <!-- ═══ VARIATION C ═══ -->
+  <div class="phone-wrapper" data-variation="c">
+    <div class="phone-frame">
+      <div class="status-bar"><span class="time">11:27</span><div></div></div>
+      <div class="phone-content" id="phone-c"></div>
+    </div>
+    <div class="phone-label">Variation C — Unified View</div>
+    <div class="phone-desc">Toggle between All/Saved, inline type tags, security-first header, combined alias + name display</div>
+  </div>
+</div>
+
+<!-- ═══ MATRIX ═══ -->
+<div id="matrix-section" class="hidden" style="padding: 0 24px 60px;">
+  <div class="matrix-card">
+    <h3>JTBD Coverage Matrix</h3>
+    <p>How each variation addresses the identified gaps</p>
+    <div style="overflow-x:auto;">
+      <table>
+        <thead>
+          <tr>
+            <th style="width:50px">Job</th>
+            <th>Need</th>
+            <th style="color:#E63946;width:180px">A: Filter-First</th>
+            <th style="color:#0047AB;width:180px">B: Smart Discovery</th>
+            <th style="color:#6A040F;width:180px">C: Unified View</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td style="font-weight:700">J1</td><td>Know which lenders support my loan type</td><td>✅ Filter chips by loan type</td><td>✅ Category grid tiles</td><td>✅ Inline filter chips</td></tr>
+          <tr><td style="font-weight:700">J2</td><td>Find saved bill / alias without lender name</td><td>✅ Saved bills section + alias search</td><td>✅ My Saved Bills carousel + alias search</td><td>✅ All/Saved toggle + alias in list</td></tr>
+          <tr><td style="font-weight:700">J3</td><td>Find my lender quickly</td><td>✅ Full names in list layout</td><td>✅ Full names + trust badge inline</td><td>✅ Full names + type tag + alias visible</td></tr>
+          <tr><td style="font-weight:700">J4</td><td>Trust this is a secure channel</td><td>✅ Security footer bar</td><td>✅ Per-lender shield + footer badges</td><td>✅ Security in header subtitle</td></tr>
+          <tr><td style="font-weight:700">J5</td><td>Resume a recent payment quickly</td><td>✅ Recents section (preserved)</td><td>✅ 'Continue' CTA with Pay button</td><td>✅ Highlighted resume card</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+const lenders = [
+  { name:"Bajaj Finance", alias:"Home EMI", type:"Home Loan", icon:"B", color:"#0047AB", saved:true },
+  { name:"Annapurna Finance Pvt Ltd", alias:null, type:"Microfinance", icon:"A", color:"#E63946", saved:false },
+  { name:"ESAF Small Finance Bank", alias:"Car Loan ESAF", type:"Vehicle Loan", icon:"E", color:"#FF6B35", saved:true },
+  { name:"L&T Finance Limited", alias:null, type:"Home Loan", icon:"L", color:"#E63946", saved:false },
+  { name:"Ujjivan Small Finance Bank", alias:"Personal EMI", type:"Personal Loan", icon:"U", color:"#FF3E6C", saved:true },
+  { name:"Utkarsh Bank Loan Repayment", alias:null, type:"Personal Loan", icon:"Ut", color:"#2D6A4F", saved:false },
+  { name:"121 Finance Private Limited", alias:null, type:"Gold Loan", icon:"12", color:"#333", saved:false },
+  { name:"AAVAS Financiers Limited", alias:null, type:"Home Loan", icon:"AV", color:"#C1121F", saved:false },
+  { name:"TVS Credit", alias:"Bike Loan TVS", type:"Vehicle Loan", icon:"TV", color:"#003566", saved:true },
+  { name:"Shriram Finance", alias:null, type:"Vehicle Loan", icon:"SF", color:"#6A040F", saved:false },
+];
+const types = ["All","Home Loan","Personal Loan","Vehicle Loan","Gold Loan","Microfinance"];
+const shield = `<svg width="13" height="13" viewBox="0 0 24 24" fill="#2E7D32" stroke="none"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5L12 1z"/></svg>`;
+const chevron = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ccc" strokeWidth="2"><path d="M9 18l6-6-6-6"/></svg>`;
+
+function filter(list, type, query) {
+  return list.filter(l =>
+    (type === "All" || l.type === type) &&
+    (!query || l.name.toLowerCase().includes(query.toLowerCase()) || (l.alias && l.alias.toLowerCase().includes(query.toLowerCase())))
+  );
+}
+
+function icon(l, size=36) {
+  return `<div class="lender-icon" style="width:${size}px;height:${size}px;background:${l.color}">${l.icon}</div>`;
+}
+
+// ═══ RENDER VARIATION A ═══
+function renderA(type="All", query="") {
+  const f = filter(lenders, type, query);
+  const saved = f.filter(l => l.saved);
+  return `
+    <div class="header-row">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1a1a1a" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      <span class="header-title">Loan repayment</span>
+      <span class="help-link">HELP</span>
+    </div>
+    <div class="search-box">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+      <input placeholder="Search by lender name or alias" value="${query}" oninput="stateA.query=this.value;document.getElementById('phone-a').innerHTML=renderA(stateA.type,stateA.query)" />
+    </div>
+    <div class="chip-row">
+      ${types.map(t => `<button class="chip ${t===type?'active':''}" onclick="stateA.type='${t}';document.getElementById('phone-a').innerHTML=renderA(stateA.type,stateA.query)">${t}</button>`).join('')}
+    </div>
+    <div class="offer-banner">
+      <div class="offer-icon">₹</div>
+      <div style="flex:1"><div style="font-size:13px;font-weight:700;color:#5D4037">Save ₹1</div><div style="font-size:11px;color:#795548">on bill payment / recharges</div></div>
+      <span style="font-size:11px;color:#E65100;font-weight:600">2 offers ▾</span>
+    </div>
+    <div style="padding:0 16px 12px">
+      <div class="section-label">RECENTS</div>
+      <div style="display:flex;align-items:center;padding:12px 14px;background:#FAFAFA;border-radius:12px;gap:12px">
+        ${icon(lenders[0],40)}
+        <div style="flex:1"><div class="lender-name">Bajaj Finance</div><div class="lender-sub">pd70pcd6994083</div></div>
+      </div>
+    </div>
+    ${saved.length ? `
+    <div style="padding:4px 16px 12px">
+      <div class="section-label">SAVED BILLS</div>
+      ${saved.map(l => `
+        <div class="saved-card">
+          ${icon(l)}
+          <div style="flex:1"><div style="font-size:13px;font-weight:600">${l.alias||l.name}</div><div class="lender-sub">${l.name} · ${l.type}</div></div>
+          <div class="saved-badge">Saved</div>
+        </div>
+      `).join('')}
+    </div>` : ''}
+    <div style="padding:4px 16px 20px">
+      <div class="section-label">ALL LENDERS</div>
+      ${f.map(l => `
+        <div class="lender-row">
+          ${icon(l)}
+          <div style="flex:1"><div class="lender-name">${l.name}</div><div class="lender-sub">${l.type}</div></div>
+          ${chevron}
+        </div>
+      `).join('')}
+    </div>
+    <div class="security-footer">
+      ${shield}
+      <span>Secured payments · RBI Compliant · 256-bit encrypted</span>
+    </div>
+  `;
+}
+
+// ═══ RENDER VARIATION B ═══
+function renderB(type="All", query="") {
+  const f = filter(lenders, type, query);
+  const saved = f.filter(l => l.saved);
+  const icons = ["🏠","👤","🚗","🪙","🏦","📋"];
+  const cats = ["Home Loan","Personal Loan","Vehicle Loan","Gold Loan","Microfinance","All Types"];
+  return `
+    <div class="dark-header">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      <span style="font-size:17px;font-weight:700;flex:1;text-align:center">Loan repayment</span>
+      <span style="font-size:12px;font-weight:600;opacity:0.7">HELP</span>
+    </div>
+    <div class="category-grid">
+      ${cats.map((c,i) => {
+        const isActive = (c==="All Types"&&type==="All") || type===c;
+        return `<button class="cat-btn ${isActive?'active':''}" onclick="stateB.type='${c==="All Types"?"All":c}';document.getElementById('phone-b').innerHTML=renderB(stateB.type,stateB.query)"><div class="cat-emoji">${icons[i]}</div>${c}</button>`;
+      }).join('')}
+    </div>
+    <div style="padding:14px 16px 8px">
+      <div class="search-box" style="margin:0">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+        <input placeholder="Search lender, alias, or loan ID" value="${query}" oninput="stateB.query=this.value;document.getElementById('phone-b').innerHTML=renderB(stateB.type,stateB.query)" />
+      </div>
+    </div>
+    <div style="padding:8px 16px 6px">
+      <div class="section-label">CONTINUE WHERE YOU LEFT OFF</div>
+      <div class="resume-card">
+        ${icon(lenders[0],42)}
+        <div style="flex:1"><div class="lender-name" style="font-weight:700">Bajaj Finance</div><div class="lender-sub">pd70pcd6994083 · Home Loan</div></div>
+        <button class="pay-btn">Pay</button>
+      </div>
+    </div>
+    ${saved.length ? `
+    <div style="padding:12px 16px 4px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+        <div class="section-label" style="margin:0">MY SAVED BILLS</div>
+        <span style="font-size:11px;color:#0047AB;font-weight:600">View All</span>
+      </div>
+      <div class="saved-carousel">
+        ${saved.map(l => `
+          <div class="saved-tile">
+            ${icon(l,38)}
+            <div style="font-size:12px;font-weight:700;margin-top:8px">${l.alias||l.name.split(' ')[0]}</div>
+            <div style="font-size:10px;color:#aaa">${l.type}</div>
+          </div>
+        `).join('')}
+      </div>
+    </div>` : ''}
+    <div style="padding:14px 16px 20px">
+      <div class="section-label">ALL LENDERS</div>
+      ${f.map(l => `
+        <div class="lender-row">
+          ${icon(l,38)}
+          <div style="flex:1">
+            <div style="display:flex;align-items:center;gap:6px"><span class="lender-name" style="font-size:13px">${l.name}</span>${shield}</div>
+            <div class="lender-sub">${l.type}</div>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+    <div class="trust-footer">
+      <div class="trust-badges"><span>✓ RBI Compliant</span><span>✓ 256-bit SSL</span><span>✓ NPCI Secured</span></div>
+      <div style="font-size:10px;color:#999">100% secure transactions</div>
+    </div>
+  `;
+}
+
+// ═══ RENDER VARIATION C ═══
+function renderC(type="All", query="", showSaved=false) {
+  let f = filter(lenders, type, query);
+  if (showSaved) f = f.filter(l => l.saved);
+  return `
+    <div class="header-row">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1a1a1a" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      <div style="flex:1;text-align:center">
+        <div style="font-size:17px;font-weight:700">Loan repayment</div>
+        <div style="display:flex;align-items:center;justify-content:center;gap:4px;margin-top:2px">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="#2E7D32" stroke="none"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5L12 1z"/></svg>
+          <span style="font-size:10px;color:#2E7D32;font-weight:600">Secured · RBI Compliant</span>
+        </div>
+      </div>
+      <span class="help-link" style="font-size:12px">HELP</span>
+    </div>
+    <div class="search-box">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+      <input placeholder="Search lender, alias, or bill ID" value="${query}" oninput="stateC.query=this.value;document.getElementById('phone-c').innerHTML=renderC(stateC.type,stateC.query,stateC.showSaved)" />
+    </div>
+    <div class="toggle-row">
+      <button class="toggle-btn left ${!showSaved?'active':'inactive'}" onclick="stateC.showSaved=false;document.getElementById('phone-c').innerHTML=renderC(stateC.type,stateC.query,false)">All Lenders</button>
+      <button class="toggle-btn right ${showSaved?'active':'inactive'}" onclick="stateC.showSaved=true;document.getElementById('phone-c').innerHTML=renderC(stateC.type,stateC.query,true)">Saved Bills</button>
+    </div>
+    <div style="display:flex;gap:6px;padding:0 16px 12px;overflow-x:auto">
+      ${types.map(t => `<button class="chip-sm ${t===type?'active':'inactive'}" onclick="stateC.type='${t}';document.getElementById('phone-c').innerHTML=renderC(stateC.type,stateC.query,stateC.showSaved)">${t}</button>`).join('')}
+    </div>
+    ${!showSaved ? `
+    <div class="resume-highlight">
+      ${icon(lenders[0],40)}
+      <div style="flex:1">
+        <div style="font-size:11px;font-weight:600;color:#1A73E8;margin-bottom:2px">Resume recent payment</div>
+        <div style="font-size:14px;font-weight:700">Bajaj Finance</div>
+        <div class="lender-sub">pd70pcd6994083</div>
+      </div>
+      <div class="resume-arrow"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg></div>
+    </div>` : ''}
+    <div style="padding:0 16px 20px">
+      ${f.map(l => `
+        <div class="lender-row" style="padding:13px 0">
+          ${icon(l,38)}
+          <div style="flex:1">
+            <div class="lender-name">${l.name}</div>
+            <div style="display:flex;align-items:center;gap:6px;margin-top:3px">
+              <span class="type-tag">${l.type}</span>
+              ${l.alias ? `<span class="alias-tag">"${l.alias}"</span>` : ''}
+              ${l.saved ? `<span class="saved-star">★ Saved</span>` : ''}
+            </div>
+          </div>
+          ${chevron}
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+// State
+const stateA = { type: "All", query: "" };
+const stateB = { type: "All", query: "" };
+const stateC = { type: "All", query: "", showSaved: false };
+
+// Initial render
+document.getElementById('phone-a').innerHTML = renderA();
+document.getElementById('phone-b').innerHTML = renderB();
+document.getElementById('phone-c').innerHTML = renderC();
+
+// Tab switching
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const tab = btn.dataset.tab;
+    const row = document.getElementById('phones-row');
+    const matrix = document.getElementById('matrix-section');
+
+    if (tab === 'matrix') {
+      row.classList.add('hidden');
+      matrix.classList.remove('hidden');
+    } else {
+      row.classList.remove('hidden');
+      matrix.classList.add('hidden');
+      document.querySelectorAll('.phone-wrapper').forEach(pw => {
+        const v = pw.dataset.variation;
+        if (tab === 'all' || tab === v) {
+          pw.classList.remove('hidden');
+        } else {
+          pw.classList.add('hidden');
+        }
+      });
+    }
+  });
+});
+</script>
+</body>
+</html>
